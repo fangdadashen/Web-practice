@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>canvas时钟</title>
+    <style>
+        canvas{
+            border:1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+        <canvas id="canvas" width="200" height="200"></canvas><!-- 这里的一切设置都是在canvas高宽200下进行的，因此后面进行了一些自适应处理，以200为标准 -->
+<script>
+    var canvas=document.getElementById('canvas');
+    ctx=canvas.getContext('2d');
+    var width=ctx.canvas.width;//高宽与canvas画布大小绑定
+    var height=ctx.canvas.height;
+    var r=width/2;
+    var rem=width/200;//canvas的宽高变化后同等变化的比例，这里的200是原来的图是在canvan高宽为200时画的，这里表示变化比例
+    function drawBackground(){
+        ctx.save();
+        ctx.translate(r,r);//r=canvas.width/2，因此圆心定位在中心
+        ctx.beginPath();
+        ctx.lineWidth=10*rem;
+        ctx.arc(0,0,r-ctx.lineWidth/2,0,2*Math.PI);
+        ctx.stroke();
+        var hourNumbers=[3,4,5,6,7,8,9,10,11,12,1,2];
+        ctx.font=18*rem+"px Arial";//调整字体大小和位置
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        //添加边框小时数字
+        hourNumbers.forEach(function(number,i){//number当前元素,i当前元素索引
+            var rad=2*Math.PI/12*i;//这里表示的是小时，有12个所以除以12,在乘以i表示每一个的位置
+            var x=Math.cos(rad)*(r-30*rem);//确定每小时数字摆放的坐标
+            var y=Math.sin(rad)*(r-30*rem);
+            ctx.fillText(number,x,y);
+        });
+        //这里是添加表示分钟的小点
+        for(var i=0;i<60;i++){
+            var rad=2*Math.PI/60*i;
+            var x=Math.cos(rad)*(r-18*rem);
+            var y=Math.sin(rad)*(r-18*rem);
+            ctx.beginPath();
+            if(i%5==0){//每五小时一个黑色小点，其余为灰色
+                ctx.fillStyle="#000";
+                ctx.arc(x,y,2*rem,0,2*Math.PI);
+            }else{
+                ctx.fillStyle="#ccc";
+                ctx.arc(x,y,2*rem,0,2*Math.PI);
+            }
+            ctx.fill();
+        }
+    }
+    //时针
+    function drawhours(hour,minute){//这里的minute是为了时针能随分钟变化而更细腻的变化
+        ctx.save();
+        ctx.beginPath();
+        ctx.rotate(2*Math.PI/12*hour+2*Math.PI/12/60*minute);
+        ctx.lineWidth=5*rem;
+        ctx.lineCap='round';
+        ctx.moveTo(0,10*rem);
+        ctx.lineTo(0,-r+50*rem);
+        ctx.stroke();
+        ctx.restore();
+    }
+    //分针
+    function drawminute(minute){
+        ctx.save();
+        ctx.beginPath();
+        ctx.rotate(2*Math.PI/60*minute);
+        ctx.lineWidth=3*rem;
+        ctx.lineCap='round';
+        ctx.moveTo(0,15*rem);
+        ctx.lineTo(0,-r+43*rem);
+        ctx.stroke();
+        ctx.restore();
+    }
+    //秒针
+    function drawsecond(second){
+        ctx.save();
+        ctx.beginPath();
+        ctx.rotate(2*Math.PI/60*second);
+        ctx.fillStyle='#c14543';
+        ctx.moveTo(-2*rem,23*rem);
+        ctx.lineTo(2*rem,+23*rem);
+        ctx.lineTo(1,-r+20*rem);
+        ctx.lineTo(-1,-r+20*rem);
+        ctx.fill();
+        ctx.restore();
+    }
+    //钟表中心白色小点
+    function drawdot(){
+        ctx.beginPath();
+        ctx.fillStyle="#fff";
+        ctx.arc(0,0,3*rem,0,2*Math.PI);
+        ctx.fill();
+    }
+    //实现动态钟表(添加动画)
+    function draw(){
+        ctx.clearRect(0,0,width,height);//清除上一次变化
+        var date=new Date();
+        var hour=date.getHours();
+        var minute=date.getMinutes();
+        var second=date.getSeconds();
+        drawBackground();//因为上一次变化清除了所以要全部加入进来再执行一次，同时drawBackground()中保存着原环境save()
+        drawhours(hour,minute);
+        drawminute(minute);
+        drawsecond(second);
+        drawdot();
+        ctx.restore();//释放原环境，开始下一次循环
+        requestAnimationFrame(draw);
+    }
+   draw();
+</script>
+</body>
+</html>
