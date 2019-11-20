@@ -99,19 +99,19 @@
     // var con=document.getElementsByClassName("con")[0];
     // var div=con.getElementsByTagName("div");
     // //表单切换
-    for(var i=0;i<li.length;i++){//遍历表头
-        li[i].index=i;//这里用一个属性来储存i值，因为不这样下面的循环不能直接拿到这个循环的i
-        li[i].onclick=function(){
-            for(var j=0;j<li.length;j++){//循环表头并移除各个表头的class
-                li[j].className="";
-            }
-            this.className="one";//this指向的给以class=one；实现表头的切换
-            for(var k=0;k<div.length;k++){//循环下面的div并把所有div的class都设为"隐藏"
-                div[k].className="hidden";
-            }
-            div[this.index].className="show";//[this.index]=i;实现下面div的切换
-        }
-    }
+//     for(var i=0;i<li.length;i++){//遍历表头
+//         li[i].index=i;//这里用一个属性来储存i值，因为不这样下面的循环不能直接拿到这个循环的i
+//         li[i].onclick=function(){
+//             for(var j=0;j<li.length;j++){//循环表头并移除各个表头的class
+//                 li[j].className="";
+//             }
+//             this.className="one";//this指向的给以class=one；实现表头的切换
+//             for(var k=0;k<div.length;k++){//循环下面的div并把所有div的class都设为"隐藏"
+//                 div[k].className="hidden";
+//             }
+//             div[this.index].className="show";//[this.index]=i;实现下面div的切换
+//         }
+//     }
 
     console.log($);
     $('#ul1 li').on('click',function(){
